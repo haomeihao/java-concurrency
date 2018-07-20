@@ -1,4 +1,4 @@
-package org.shao.juc.multi_producer_consumer;
+package org.shao.juc.mtpc;
 
 import lombok.extern.slf4j.Slf4j;
 

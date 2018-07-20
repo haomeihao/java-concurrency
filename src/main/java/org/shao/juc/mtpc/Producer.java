@@ -1,15 +1,15 @@
-package org.shao.juc.multi_producer_consumer;
+package org.shao.juc.mtpc;
 
 /**
- * 消费者
+ * 生产者
  * Created by hmh on 2018/7/20.
  * @author hmh
  */
-public class Consumer implements Runnable {
+public class Producer implements Runnable {
 
     private Resource resource;
 
-    public Consumer(Resource resource) {
+    public Producer(Resource resource) {
         this.resource = resource;
     }
 
@@ -21,7 +21,7 @@ public class Consumer implements Runnable {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            resource.consume();
+            resource.produce();
         }
     }
 }

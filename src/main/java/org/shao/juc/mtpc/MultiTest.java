@@ -1,4 +1,4 @@
-package org.shao.juc.multi_producer_consumer;
+package org.shao.juc.mtpc;
 
 /**
  * Created by hmh on 2018/7/20.
