@@ -3,7 +3,6 @@ package org.shao.juc.concurrent;
 import lombok.extern.slf4j.Slf4j;
 import org.shao.annoations.ThreadSafe;
 
-import java.util.Map;
 import java.util.concurrent.*;
 
 /**
@@ -14,13 +13,13 @@ import java.util.concurrent.*;
 @ThreadSafe
 public class ConcurrentHashMapTest {
 
-    private static Map<Integer, Integer> map = new ConcurrentHashMap<>();
+    private static ConcurrentHashMap<Integer, Integer> map = new ConcurrentHashMap<>();
 
     // 请求总数
-    public static int requestTotal = 5000;
+    public static int requestTotal = 10000;
 
     // 并发执行的线程数
-    public static int threadTotal = 100;
+    public static int threadTotal = 500;
 
     public static void main(String[] args) throws InterruptedException {
         // 线程池

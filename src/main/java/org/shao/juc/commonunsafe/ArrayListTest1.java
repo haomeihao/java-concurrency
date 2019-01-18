@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.shao.annoations.NotThreadSafe;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -18,10 +17,10 @@ import java.util.concurrent.Semaphore;
 @NotThreadSafe
 public class ArrayListTest1 {
 
-    private static List<Integer> list = new ArrayList<>();
+    private static ArrayList<Integer> list = new ArrayList<>();
 
     // 请求总数
-    public static int requestTotal = 5000;
+    public static int requestTotal = 400;
 
     // 并发执行的线程数
     public static int threadTotal = 100;
@@ -55,6 +54,11 @@ public class ArrayListTest1 {
     }
 
     private static void update(int count) {
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         list.add(count);
     }
 }

@@ -12,24 +12,24 @@ import java.io.IOException;
  * @author hmh
  */
 @Slf4j
-public class HttpFilter implements Filter {
+public class MyFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-
+        log.info("init, {}", Thread.currentThread().getId());
     }
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest)servletRequest;
-        log.info("do filter, {}, {}", Thread.currentThread().getId(), request.getServletPath());
+        log.info("doFilter, {}, {}", Thread.currentThread().getId(), request.getServletPath());
         RequestHolder.add(Thread.currentThread().getId());
         filterChain.doFilter(servletRequest, servletResponse);
     }
 
     @Override
     public void destroy() {
-
+        log.info("destroy, {}", Thread.currentThread().getId());
     }
 
 }
