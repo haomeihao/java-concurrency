@@ -8,6 +8,7 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import org.shao.netty.Constant;
+import org.shao.netty.channelhandler.LifeCyCleTestHandler;
 import org.shao.netty.pipeline.*;
 import org.shao.netty.protocol.ChatRequestPacket;
 import org.shao.netty.protocol.LoginUtil;
@@ -43,6 +44,7 @@ public class NettyClientExample {
 
 //                        socketChannel.pipeline().addLast(new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 7, 4));
                         socketChannel.pipeline().addLast(new Spliter());
+                        socketChannel.pipeline().addLast(new LifeCyCleTestHandler());
                         socketChannel.pipeline().addLast(new PacketDecoder());
                         socketChannel.pipeline().addLast(new LoginClientChannelHandler());
                         socketChannel.pipeline().addLast(new ChatClientChannelHandler());

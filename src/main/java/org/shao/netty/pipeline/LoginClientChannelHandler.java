@@ -37,7 +37,7 @@ public class LoginClientChannelHandler extends SimpleChannelInboundHandler<Login
 
             ChatRequestPacket chatRequestPacket = new ChatRequestPacket();
             chatRequestPacket.setMessage("你好，测试Netty拆包!");
-            for (int i = 0; i < 1000; i++) {
+            for (int i = 0; i < 1; i++) {
                 ctx.channel().writeAndFlush(chatRequestPacket);
             }
         } else {

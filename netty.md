@@ -1,7 +1,7 @@
 [TOC]
 ### Netty重点笔记
 - 自定义编码协议-图片
-![图片](netty_custom_protocol.jpg)
+![图片](file/netty_custom_protocol.jpg)
 
 #### NIO标准
 ```aidl
@@ -131,7 +131,8 @@ public abstract class MessageToByteEncoder<I> extends ChannelOutboundHandlerAdap
 public class Spliter extends LengthFieldBasedFrameDecoder
 ```
 
-#### ChannelHandler 的生命周期
-``` 
-
+#### ChannelHandler Lifecycle 生命周期
+![图片](file/channelhandler.png)
+```
+public class LifeCyCleTestHandler extends ChannelInboundHandlerAdapter
 ```
