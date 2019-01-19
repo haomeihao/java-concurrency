@@ -8,11 +8,13 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import org.shao.netty.Constant;
+import org.shao.netty.chat.SessionUtil;
 import org.shao.netty.pipeline.ChatClientChannelHandler;
 import org.shao.netty.pipeline.LoginClientChannelHandler;
 import org.shao.netty.pipeline.PacketDecoder;
 import org.shao.netty.pipeline.PacketEncoder;
 import org.shao.netty.protocol.ChatRequestPacket;
+import org.shao.netty.protocol.LoginRequestPacket;
 
 import java.util.Date;
 import java.util.Scanner;
@@ -63,7 +65,7 @@ public class NettyClientExample {
             if (future.isSuccess()) {
                 System.out.println("Connect success");
                 Channel channel = ((ChannelFuture) future).channel();
-                startConsoleThread(channel);
+                startConsoleThread2(channel);
             } else if (retry == 0) {
                 System.err.println("The number of retries has run out, abandon connection");
             } else {
@@ -97,6 +99,37 @@ public class NettyClientExample {
 //                }
             }
         }).start();
+    }
+
+    private static void startConsoleThread2(Channel channel) {
+        Scanner scanner = new Scanner(System.in);
+        LoginRequestPacket loginRequestPacket = new LoginRequestPacket();
+
+        new Thread(() -> {
+            while (!Thread.interrupted()) {
+                if (!SessionUtil.hasLogin(channel)) {
+                    System.out.println("请输入用户名登录:");
+                    String userName = scanner.nextLine();
+                    loginRequestPacket.setUsername(userName);
+                    loginRequestPacket.setPassword("pwd");
+
+                    channel.writeAndFlush(loginRequestPacket);
+                    waitForLoginResponse();
+                } else {
+                    String toUserId = scanner.next();
+                    String message = scanner.next();
+                    channel.writeAndFlush(new ChatRequestPacket(toUserId, message));
+                }
+            }
+        }).start();
+    }
+
+    private static void waitForLoginResponse() {
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
 }

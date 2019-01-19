@@ -14,6 +14,9 @@ public class LoginResponsePacket extends Packet {
 
     private String msg;
 
+    private String userId;
+    private String userName;
+
     @Override
     protected Byte getCommand() {
         return Command.LOGIN_RESPONSE;

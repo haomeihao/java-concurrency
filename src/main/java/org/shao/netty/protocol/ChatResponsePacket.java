@@ -8,7 +8,22 @@ import lombok.Data;
 @Data
 public class ChatResponsePacket extends Packet {
 
+    /**
+     * 谁发送的
+     */
+    private String fromUserId;
+    private String fromUserName;
+
     private String message;
+
+    public ChatResponsePacket() {
+    }
+
+    public ChatResponsePacket(String fromUserId, String fromUserName, String message) {
+        this.fromUserId = fromUserId;
+        this.fromUserName = fromUserName;
+        this.message = message;
+    }
 
     @Override
     protected Byte getCommand() {
