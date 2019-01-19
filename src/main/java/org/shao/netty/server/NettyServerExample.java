@@ -9,6 +9,7 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 import org.shao.netty.Constant;
+import org.shao.netty.pipeline.*;
 
 /**
  * Created by hmh on 2019/1/17.
@@ -41,7 +42,16 @@ public class NettyServerExample {
                 .childHandler(new ChannelInitializer<NioSocketChannel>() {
                     @Override
                     protected void initChannel(NioSocketChannel socketChannel) throws Exception {
-                        socketChannel.pipeline().addLast(new ServerHandler());
+//                        socketChannel.pipeline().addLast(new ServerHandler());
+
+//                        socketChannel.pipeline().addLast(new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 7, 4));
+                        socketChannel.pipeline().addLast(new Spliter());
+                        socketChannel.pipeline().addLast(new PacketDecoder());
+                        socketChannel.pipeline().addLast(new LoginServerChannelHandler());
+                        socketChannel.pipeline().addLast(new ChatServerChannelHandler());
+                        socketChannel.pipeline().addLast(new PacketEncoder());
+
+//                        socketChannel.pipeline().addLast(new SecondServerHandler());
                     }
                 });
 

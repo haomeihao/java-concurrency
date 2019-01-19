@@ -1,7 +1,6 @@
 package org.shao.netty.client;
 
 import io.netty.bootstrap.Bootstrap;
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -9,9 +8,9 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import org.shao.netty.Constant;
+import org.shao.netty.pipeline.*;
 import org.shao.netty.protocol.ChatRequestPacket;
 import org.shao.netty.protocol.LoginUtil;
-import org.shao.netty.protocol.PacketCodec;
 
 import java.util.Date;
 import java.util.Scanner;
@@ -40,7 +39,16 @@ public class NettyClientExample {
                 .handler(new ChannelInitializer<NioSocketChannel>() {
                     @Override
                     protected void initChannel(NioSocketChannel socketChannel) throws Exception {
-                        socketChannel.pipeline().addLast(new ClientHandler());
+//                        socketChannel.pipeline().addLast(new ClientHandler());
+
+//                        socketChannel.pipeline().addLast(new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 7, 4));
+                        socketChannel.pipeline().addLast(new Spliter());
+                        socketChannel.pipeline().addLast(new PacketDecoder());
+                        socketChannel.pipeline().addLast(new LoginClientChannelHandler());
+                        socketChannel.pipeline().addLast(new ChatClientChannelHandler());
+                        socketChannel.pipeline().addLast(new PacketEncoder());
+
+//                        socketChannel.pipeline().addLast(new SecondClientHandler());
                     }
                 });
 
@@ -79,8 +87,10 @@ public class NettyClientExample {
 
                     ChatRequestPacket chatRequestPacket = new ChatRequestPacket();
                     chatRequestPacket.setMessage(line);
-                    ByteBuf byteBuf = PacketCodec.getInstance().encode(channel.alloc(), chatRequestPacket);
-                    channel.writeAndFlush(byteBuf);
+//                    ByteBuf byteBuf = PacketCodec.getInstance().encode(channel.alloc(), chatRequestPacket);
+//                    channel.writeAndFlush(byteBuf);
+
+                    channel.writeAndFlush(chatRequestPacket);
                 }
             }
         }).start();

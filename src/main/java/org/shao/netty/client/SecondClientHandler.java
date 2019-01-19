@@ -10,16 +10,20 @@ import java.util.Date;
 /**
  * Created by hmh on 2019/1/17.
  */
-public class FirstClientHandler extends ChannelInboundHandlerAdapter {
+public class SecondClientHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         Thread.sleep(1000);
         System.out.println(new Date() + ": (一)客户端写出数据");
         // 1.获取数据
-        ByteBuf byteBuf = getByteBuf(ctx);
+//        ByteBuf byteBuf = getByteBuf(ctx);
         // 2.写数据
-        ctx.channel().writeAndFlush(byteBuf);
+//        ctx.channel().writeAndFlush(byteBuf);
+        for (int i = 0; i < 1000; i++) {
+            ByteBuf byteBuf = getByteBuf(ctx);
+            ctx.channel().writeAndFlush(byteBuf);
+        }
     }
 
     private ByteBuf getByteBuf(ChannelHandlerContext ctx) {

@@ -12,7 +12,7 @@ import java.util.Map;
  */
 public class PacketCodec {
 
-    private static final int MAGIC_NUMBER = 0x12345678;
+    public static final int MAGIC_NUMBER = 0x12345678;
     private static final Map<Byte, Class<? extends Packet>> packetTypeMap;
     private static final Map<Byte, Serializer> serializerMap;
     static {
@@ -58,6 +58,10 @@ public class PacketCodec {
     public ByteBuf encode(ByteBufAllocator byteBufAllocator, Packet packet) {
         // 1. 创建 ByteBuf 对象
         ByteBuf byteBuf = byteBufAllocator.ioBuffer();
+        return encode(byteBuf, packet);
+    }
+
+    public ByteBuf encode(ByteBuf byteBuf, Packet packet) {
         // 2. 序列化 Java 对象
         byte[] bytes = Serializer.DEFAULT.serialize(packet);
         // 3. 实际编码过程

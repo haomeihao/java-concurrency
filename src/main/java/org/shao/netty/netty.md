@@ -1,4 +1,7 @@
+[TOC]
 ### Netty重点笔记
+- 自定义编码协议-图片
+![图片](netty_custom_protocol.jpg)
 
 #### NIO标准
 ```aidl
@@ -80,6 +83,55 @@ duplicate().retain()
 ```
 
 #### Pipeline 与 ChannelHandler
+``` 
+无论是从服务端来看，还是客户端来看，在 Netty 整个框架里面，一条连接对应着一个 Channel，
+这条 Channel 所有的处理逻辑都在一个叫做 ChannelPipeline 的对象里面，
+ChannelPipeline 是一个双向链表结构，他和 Channel 之间是一对一的关系。
+
+ChannelPipeline 里面每个节点都是一个 ChannelHandlerContext 对象，
+这个对象能够拿到和 Channel 相关的所有的上下文信息，
+然后这个对象包着一个重要的对象，那就是逻辑处理器 ChannelHandler。
+
+ChannelHandler 分为 inBound 和 outBound 两种类型的接口，
+分别是处理数据读与数据写的逻辑。
+
+这个和python的scrapy框架的middleware中间件原理一样，就是一种责任链设计模式。
+
+ChannelInboundHandler
+ChannelInboundHandlerAdapter
+ChannelOutboundHandler
+ChannelOutboundHandlerAdapter
+
+public class ChannelInboundHandlerAdapter extends ChannelHandlerAdapter implements ChannelInboundHandler
+public class ChannelOutboundHandlerAdapter extends ChannelHandlerAdapter implements ChannelOutboundHandler
+
+// 解码
+import io.netty.handler.codec.ByteToMessageDecoder;
+public abstract class ByteToMessageDecoder extends ChannelInboundHandlerAdapter
+// 管道处理
+import io.netty.channel.SimpleChannelInboundHandler<T>;
+public abstract class SimpleChannelInboundHandler<I> extends ChannelInboundHandlerAdapter
+// 编码
+import io.netty.handler.codec.MessageToByteEncoder<T>;
+public abstract class MessageToByteEncoder<I> extends ChannelOutboundHandlerAdapter
+```
+
+#### 拆包粘包
+- Netty自带的拆包器
+``` 
+固定长度的拆包器 FixedLengthFrameDecoder
+行拆包器 LineBasedFrameDecoder
+分隔符拆包器 DelimiterBasedFrameDecoder
+基于长度域拆包器 LengthFieldBasedFrameDecoder
+```
+
+- 拒绝非本协议连接(自定义编码协议的魔数)
+``` 
+自定义拆包器进行处判断过滤
+public class Spliter extends LengthFieldBasedFrameDecoder
+```
+
+#### ChannelHandler 的生命周期
 ``` 
 
 ```
