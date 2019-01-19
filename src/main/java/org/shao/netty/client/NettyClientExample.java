@@ -8,10 +8,11 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import org.shao.netty.Constant;
-import org.shao.netty.channelhandler.LifeCyCleTestHandler;
-import org.shao.netty.pipeline.*;
+import org.shao.netty.pipeline.ChatClientChannelHandler;
+import org.shao.netty.pipeline.LoginClientChannelHandler;
+import org.shao.netty.pipeline.PacketDecoder;
+import org.shao.netty.pipeline.PacketEncoder;
 import org.shao.netty.protocol.ChatRequestPacket;
-import org.shao.netty.protocol.LoginUtil;
 
 import java.util.Date;
 import java.util.Scanner;
@@ -43,8 +44,8 @@ public class NettyClientExample {
 //                        socketChannel.pipeline().addLast(new ClientHandler());
 
 //                        socketChannel.pipeline().addLast(new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 7, 4));
-                        socketChannel.pipeline().addLast(new Spliter());
-                        socketChannel.pipeline().addLast(new LifeCyCleTestHandler());
+//                        socketChannel.pipeline().addLast(new Spliter());
+//                        socketChannel.pipeline().addLast(new LifeCyCleTestHandler());
                         socketChannel.pipeline().addLast(new PacketDecoder());
                         socketChannel.pipeline().addLast(new LoginClientChannelHandler());
                         socketChannel.pipeline().addLast(new ChatClientChannelHandler());
@@ -82,7 +83,7 @@ public class NettyClientExample {
     private static void startConsoleThread(Channel channel) {
         new Thread(() -> {
             while (!Thread.interrupted()) {
-                if (LoginUtil.hasLogin(channel)) {
+//                if (LoginUtil.hasLogin(channel)) {
                     System.out.println("输入消息发送至服务端: ");
                     Scanner scanner = new Scanner(System.in);
                     String line = scanner.nextLine();
@@ -93,7 +94,7 @@ public class NettyClientExample {
 //                    channel.writeAndFlush(byteBuf);
 
                     channel.writeAndFlush(chatRequestPacket);
-                }
+//                }
             }
         }).start();
     }

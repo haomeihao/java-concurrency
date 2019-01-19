@@ -44,4 +44,15 @@ public class LoginClientChannelHandler extends SimpleChannelInboundHandler<Login
             System.err.println(new Date() + ": 客户端登录失败，原因：" + loginResponsePacket.getMsg());
         }
     }
+
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        System.out.println("客户端连接被关闭!");
+    }
+
+    @Override
+    public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
+        System.out.println("客户端连接被注销!");
+    }
+
 }

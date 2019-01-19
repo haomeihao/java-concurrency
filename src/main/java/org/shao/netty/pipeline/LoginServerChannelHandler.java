@@ -4,6 +4,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.shao.netty.protocol.LoginRequestPacket;
 import org.shao.netty.protocol.LoginResponsePacket;
+import org.shao.netty.protocol.LoginUtil;
 
 import java.util.Date;
 
@@ -19,6 +20,7 @@ public class LoginServerChannelHandler extends SimpleChannelInboundHandler<Login
         // 登录校验
         if (valid(loginRequestPacket)) {
             // 校验成功
+            LoginUtil.markAsLogin(ctx.channel());
             System.out.println(new Date() + ": 登录成功!");
             loginResponsePacket.setSuccess(true);
         } else {
