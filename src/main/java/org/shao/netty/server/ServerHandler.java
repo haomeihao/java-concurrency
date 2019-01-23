@@ -39,6 +39,7 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
             ByteBuf responseByteBuf = PacketCodec.getInstance().encode(ctx.alloc(), loginResponsePacket);
             // 写数据
             ctx.channel().writeAndFlush(responseByteBuf);
+//            ctx.writeAndFlush()
         } else if (packet instanceof ChatRequestPacket) {
             // 处理消息
             ChatRequestPacket chatRequestPacket = (ChatRequestPacket) packet;

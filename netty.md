@@ -136,3 +136,108 @@ public class Spliter extends LengthFieldBasedFrameDecoder
 ```
 public class LifeCyCleTestHandler extends ChannelInboundHandlerAdapter
 ```
+
+#### Netty性能调优
+- 1.共享 ChannelHandler
+``` 
+类上加注解@ChannelHandler.Sharable，并构造单例（前提是无状态）
+```
+
+- 2.压缩 ChannelHandler 合并编解码器
+``` 
+PacketDecoder & PacketEncoder -> PacketCodecHandler
+```
+
+- 3.缩短事件传播路径
+``` 
+压缩 ChannelHandler - 合并平行 ChannelHandler
+然后构造成单例模式。
+
+更改事件传播源 不太理解 先略过
+```
+
+- 4.减少阻塞主线程的操作
+``` 
+channelRead0() 这个方法里面的耗时操作不要放在这里
+放在业务线程池中去处理，不再放在Netty的worker线程去处理
+```
+
+- 5.如何准确统计处理时长
+```
+protected void channelRead0(ChannelHandlerContext ctx, T packet) {
+    threadPool.submit(new Runnable() {
+        long begin = System.currentTimeMillis();
+        // 1. 一些逻辑
+        // 2. 数据库或者网络等一些耗时的操作
+        // 3. writeAndFlush
+        xxx.writeAndFlush().addListener(future -> {
+            if (future.isDone()) {
+                // 4. 其他的逻辑
+                long time =  System.currentTimeMillis() - begin;
+            }
+        });
+    })
+}
+```
+
+#### 心跳与空闲检测
+- 1.服务端空闲检测
+``` 
+public class IMIdleStateHandler extends IdleStateHandler {
+
+    private static final int READER_IDLE_TIME = 15;
+
+    public IMIdleStateHandler() {
+        super(READER_IDLE_TIME, 0, 0, TimeUnit.SECONDS);
+    }
+
+    @Override
+    protected void channelIdle(ChannelHandlerContext ctx, IdleStateEvent evt) {
+        System.out.println(READER_IDLE_TIME + "秒内未读到数据，关闭连接");
+        ctx.channel().close();
+    }
+}
+```
+
+- 2.客户端定时发心跳
+``` 
+public class HeartBeatTimerHandler extends ChannelInboundHandlerAdapter {
+
+    private static final int HEARTBEAT_INTERVAL = 5;
+
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        scheduleSendHeartBeat(ctx);
+
+        super.channelActive(ctx);
+    }
+
+    private void scheduleSendHeartBeat(ChannelHandlerContext ctx) {
+        ctx.executor().schedule(() -> {
+
+            if (ctx.channel().isActive()) {
+                ctx.writeAndFlush(new HeartBeatRequestPacket());
+                scheduleSendHeartBeat(ctx);
+            }
+
+        }, HEARTBEAT_INTERVAL, TimeUnit.SECONDS);
+    }
+}
+```
+
+- 3.服务端回复心跳与客户端空闲检测
+``` 
+@ChannelHandler.Sharable
+public class HeartBeatRequestHandler extends SimpleChannelInboundHandler<HeartBeatRequestPacket> {
+    public static final HeartBeatRequestHandler INSTANCE = new HeartBeatRequestHandler();
+
+    private HeartBeatRequestHandler() {
+
+    }
+
+    @Override
+    protected void channelRead0(ChannelHandlerContext ctx, HeartBeatRequestPacket requestPacket) {
+        ctx.writeAndFlush(new HeartBeatResponsePacket());
+    }
+}
+```
