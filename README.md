@@ -1,7 +1,7 @@
-## java-concurrency
+## java concurrency
 ``` 
 java concurrency practice
 ```
+![图片](file/background.jpg)
 
-#### pretty view
-![图片](file/fengjing.jpg)
+
